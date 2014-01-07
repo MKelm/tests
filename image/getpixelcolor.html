@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Test Image Get Pixel Color</title>
+    <script src="../libs/jquery.js"></script>
+    <script language="javascript">
+      $(document).ready(function() {
+        var canvas = $("#canvas")[0], ctx = canvas.getContext('2d');
+
+        var img = new Image();
+        img.src = 'image.jpg';
+
+        img.onload = function() {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          var data = ctx.getImageData(20, 20, 1, 1).data;
+          console.log(data);
+        }
+      });
+    </script>
+</head>
+<body>
+  <canvas id="canvas" style="display:none" />
+</body>
+</html>
