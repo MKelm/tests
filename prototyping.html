@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Test Prototyping</title>
+    <script language="javascript">
+      var X,Y, x,y, i, intNow;
+
+      X = function() {};
+      X.prototype.message = function(s) { var mymessage = s + "";}
+      X.prototype.addition = function(i,j) { return (i *2 + j * 2) / 2; }
+
+      Y = function() {
+          this.message = function(s) { var mymessage = s + "";}
+          this.addition = function(i,j) { return (i *2 + j * 2) / 2; }
+      };
+
+
+      intNow = (new Date()).getTime();
+      for (i = 0; i < 1000000; i++) {
+          y = new Y();
+          y.message('hi');
+          y.addition(i,2)
+      }
+      console.log((new Date()).getTime() - intNow); // without prototyping
+
+      intNow = (new Date()).getTime();
+      for (i = 0; i < 1000000; i++) {
+          x = new X();
+          x.message('hi');
+          x.addition(i,2)
+      }
+      console.log((new Date()).getTime() - intNow); // with prototyping
+    </script>
+</head>
+<body>
+</body>
+</html>
