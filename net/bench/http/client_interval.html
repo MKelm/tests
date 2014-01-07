@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Mass Control Tycoon - Net Bench - HTTP Client</title>
+    <script src="../../../libs/jquery.js"></script>
+    <script language="javascript">
+      var storage = [];
+
+      $.ajaxSetup({async:false});
+      var intNow = (new Date()).getTime();
+      var count = 0;
+      var interval = setInterval(
+        function() {
+          storage.push(JSON.parse($.get('server.json').responseText));
+          if (count >= 1000) {
+            clearInterval(interval);
+            console.log((new Date()).getTime() - intNow); // ajax communication
+          }
+          count++;
+        },
+        10
+      );
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Mass Control Tycoon - Net Bench - HTTP Client</title>
+    <script src="../../../libs/jquery.js"></script>
+    <script language="javascript">
+      var storage = [];
+
+      $.ajaxSetup({async:false});
+      intNow = (new Date()).getTime();
+      for (var i = 0; i < 1000; i++) {
+        storage.push(JSON.parse($.get('server.json').responseText));
+      }
+      console.log((new Date()).getTime() - intNow); // ajax communication
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Mass Control Tycoon - Net Bench - TCP Client</title>
+    <script language="javascript">
+      var net = require('net');
+
+      var HOST = '127.0.0.1';
+      var PORT = 6969;
+
+      var storage = [];
+      var count = 0;
+      var intNow = (new Date()).getTime();
+
+      var client = new net.Socket();
+      client.connect(PORT, HOST, function() {
+        client.write('request');
+      });
+
+      client.on('data', function(data) {
+        if (count < 1000) {
+          storage.push(JSON.parse(String(data)));
+          client.write('request');
+        } else {
+          console.log((new Date()).getTime() - intNow); // tcp communication
+          client.destroy();
+        }
+        count++;
+      });
+    </script>
+</head>
+<body>
+</body>
+</html>

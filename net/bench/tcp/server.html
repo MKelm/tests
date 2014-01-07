@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Mass Control Tycoon - Net Bench - TCP Server</title>
+    <script language="javascript">
+      var net = require('net');
+
+      var HOST = '127.0.0.1';
+      var PORT = 6969;
+
+      net.createServer(function(sock) {
+          sock.on('data', function(data) {
+              sock.write('{ "data": 123 }');
+          });
+      }).listen(PORT, HOST);
+    </script>
+</head>
+<body>
+</body>
+</html>
