@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Test Load JSON</title>
+    <script src="libs/jquery.js"></script>
+    <script language="javascript">
+
+      var json = {};
+      $.ajaxSetup({async:false});
+      intNow = (new Date()).getTime();
+      for (i = 0; i < 100; i++) {
+        json = $.parseJSON($.get('names.json').responseText);
+      }
+      console.log((new Date()).getTime() - intNow); // jquery
+
+      json = {};
+      intNow = (new Date()).getTime();
+      for (i = 0; i < 100; i++) {
+        json = JSON.parse(require('fs').readFileSync("./tests/names.json", { encoding : "utf8" }));
+      }
+      console.log((new Date()).getTime() - intNow); // build-in
+    </script>
+</head>
+<body>
+</body>
+</html>
