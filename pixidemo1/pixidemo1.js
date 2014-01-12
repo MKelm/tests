@@ -22,11 +22,6 @@ $(document).ready(function() {
 
   $("body").append(renderer.view);
 
-  //requestAnimFrame(animate);
-  function animate() {
-    renderer.render(stage);
-    requestAnimFrame(animate);
-  }
   function initScreen() {
     screen.width = window.innerWidth;
     screen.height = window.innerHeight;
@@ -38,7 +33,7 @@ $(document).ready(function() {
   function makeMaze() {
     var fieldSize = 10;
     var mazeSize = Math.min(Math.round(screen.width / fieldSize), Math.round(screen.height / fieldSize));
-    if (mazeSize > 70) mazeSize = 70;
+    if (mazeSize > 90) mazeSize = 90;
 
     var mazeFields = newMaze(mazeSize, mazeSize);
 
