@@ -33,12 +33,12 @@ $(document).ready(function() {
     mazeGfx.position = {
       x: screen.width / 2, y: screen.height / 2
     };
-    makeMaze();
   }
 
   function makeMaze() {
     var fieldSize = 10;
     var mazeSize = Math.min(Math.round(screen.width / fieldSize), Math.round(screen.height / fieldSize));
+    if (mazeSize > 70) mazeSize = 70;
 
     var mazeFields = newMaze(mazeSize, mazeSize);
 
@@ -49,7 +49,6 @@ $(document).ready(function() {
     var offsetX = -1 * mazeSize / 2 * fieldSize,
         offsetY = -1 * mazeSize / 2 * fieldSize;
 
-    console.log(mazeFields.length, mazeSize.height);
     for (var y = 0; y < mazeFields.length; y++) {
       for (var x = 0; x < mazeFields[y].length; x++) {
 
