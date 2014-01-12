@@ -22,7 +22,7 @@ $(document).ready(function() {
 
   $("body").append(renderer.view);
 
-  requestAnimFrame(animate);
+  //requestAnimFrame(animate);
   function animate() {
     renderer.render(stage);
     requestAnimFrame(animate);
@@ -36,32 +36,39 @@ $(document).ready(function() {
     makeMaze();
   }
 
-  function isChance(p, max) {
-    if (typeof max == "undefined") max = 32767;
-    var r = Math.random() * max;
-    return r < (max * p)
-  }
-
   function makeMaze() {
     var fieldSize = 10;
-    var mazeSize = { width: screen.width / fieldSize, height: screen.height / fieldSize };
-    var mazeFields = [];
-    for (var y = 0; y < mazeSize.height; y++) {
-      mazeFields[y] = [];
-      for (var x = 0; x < mazeSize.width; x++) {
-        mazeFields[y][x] = (isChance(0.4)) ? 1 : 0;
-      }
-    }
+    var mazeSize = Math.min(Math.round(screen.width / fieldSize), Math.round(screen.height / fieldSize));
+
+    var mazeFields = newMaze(mazeSize, mazeSize);
 
     // draw maze
     mazeGfx.clear();
     mazeGfx.beginFill(0xFFFFFF);
-    var offsetX = -1 * mazeSize.width * fieldSize / 2,
-        offsetY = -1 * mazeSize.height * fieldSize / 2;
+    mazeGfx.lineStyle(2, 0xFFFFFF);
+    var offsetX = -1 * mazeSize / 2 * fieldSize,
+        offsetY = -1 * mazeSize / 2 * fieldSize;
+
+    console.log(mazeFields.length, mazeSize.height);
     for (var y = 0; y < mazeFields.length; y++) {
       for (var x = 0; x < mazeFields[y].length; x++) {
-        if (mazeFields[y][x] == 1)
-          mazeGfx.drawRect(offsetX + x * fieldSize, offsetY + y * fieldSize, fieldSize, fieldSize);
+
+        if (mazeFields[y][x][0] == 0) { // top wall
+          mazeGfx.moveTo(offsetX + x * fieldSize, offsetY + y * fieldSize);
+          mazeGfx.lineTo(offsetX + x * fieldSize + fieldSize, offsetY + y * fieldSize);
+        }
+        if (mazeFields[y][x][1] == 0) { // right wall
+          mazeGfx.moveTo(offsetX + x * fieldSize + fieldSize, offsetY + y * fieldSize);
+          mazeGfx.lineTo(offsetX + x * fieldSize + fieldSize, offsetY + y * fieldSize + fieldSize);
+        }
+        if (mazeFields[y][x][2] == 0) { // bottom wall
+          mazeGfx.moveTo(offsetX + x * fieldSize, offsetY + y * fieldSize + fieldSize);
+          mazeGfx.lineTo(offsetX + x * fieldSize + fieldSize, offsetY + y * fieldSize + fieldSize);
+        }
+        if (mazeFields[y][x][3] == 0) { // left wall
+          mazeGfx.moveTo(offsetX + x * fieldSize, offsetY + y * fieldSize);
+          mazeGfx.lineTo(offsetX + x * fieldSize, offsetY + y * fieldSize + fieldSize);
+        }
       }
     }
     mazeGfx.endFill();
@@ -69,5 +76,6 @@ $(document).ready(function() {
   }
 
   makeMaze();
+  renderer.render(stage);
 
 });
