@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Net - TCP Communication</title>
+    <script src="../libs/jquery.js"></script>
+    <script language="javascript">
+
+      function getLocalIp(internal) {
+        var networkInterfaces = require('os').networkInterfaces(), interface = null;
+        for (var interfaceName in networkInterfaces) {
+          interface = networkInterfaces[interfaceName];
+          for (var i = 0; i < interface.length; i++) {
+            if (interface[i].family == "IPv4" && interface[i].internal == new Boolean(internal))
+              return interface[i].address;
+          }
+        }
+      }
+
+      var net = require('net'), server = null, client = null;
+      var HOST = getLocalIp();
+      var PORT = 6969;
+
+      $(document).ready(function() {
+        $("#ownIp").html(HOST);
+
+        server = net.createServer(function(sock) {
+          sock.on('data', function(data) {
+              sock.write('{ "data": 123 }');
+          });
+        });
+        server.listen(PORT, HOST);
+        $("#serverReady").html("ready");
+
+        $("#connectBtn").click(function() {
+          var storage = [];
+          var count = 0;
+
+          if (client !== null) client.destroy();
+          client = new net.Socket();
+
+          client.connect(PORT, $("#targetIp").val(), function() {
+            client.write('request');
+          });
+
+          client.on('data', function(data) {
+            if (count < 1000) {
+              storage.push(JSON.parse(String(data)));
+              client.write('request');
+            } else {
+              $("#requestCount").html(count);
+              count = 0;
+              storage = [];
+            }
+            count++;
+          });
+        });
+
+      });
+    </script>
+</head>
+<body>
+  Your IP: <span id="ownIp">0.0.0.0</span> - Server <span id ="serverReady">not-ready</span><br />
+  Target IP: <input type="text" id="targetIp" value="" /><br />
+  <input type="button" id="connectBtn" value="Connect & Send data" /> - Requests <span id="requestCount">0</span>
+</body>
+</html>
