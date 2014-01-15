@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+  color: #FFF;
+  font-size: 1em;
+}
+canvas { position: fixed; }
+.audio {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  display: none;
+  z-index: 1;
+}
