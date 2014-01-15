@@ -26,22 +26,22 @@ $(document).ready(function() {
     return r < (max * p)
   }
 
-  var lastSpawnTryTime = 0, currentTime = 0;
+  var lastHeroSpawnTryTime = 0, currentTime = 0;
   function animate() {
     renderer.render(stage);
     TWEEN.update();
 
     currentTime = new Date().getTime();
-    if (currentTime - lastSpawnTryTime > 100) {
-      lastSpawnTryTime = currentTime;
-      spawnHero();
+    if (currentTime - lastHeroSpawnTryTime > 100) {
+      lastHeroSpawnTryTime = currentTime;
+      heroSpawnTry();
     }
     requestAnimFrame(function() { animate(); });
   }
   requestAnimFrame(function() { animate(); });
 
   // grid stuff
-  var gridSize = { width: 100, height: 100 };
+  var gridSize = { width: 80, height: 80 };
   var gridFieldSize = { width: Math.round(screen.height/gridSize.width), height: Math.round(screen.height/gridSize.height) };
   var pathfindingGrid = new PF.Grid(gridSize.width, gridSize.height);
   var grid = [];
@@ -63,11 +63,21 @@ $(document).ready(function() {
   ];
   var middlePoint = {x: Math.round(gridSize.width/2), y: Math.round(gridSize.height/2)};
 
-  function spawnHero() {
+  function heroSpawnTry() {
     if (isChance(0.3 - (0.3 / maxHeroes * heroes.length))) {
       console.log("spawn hero with chance", 0.3 - (0.3 / maxHeroes * heroes.length));
       var position = spawnPoints[Math.round(Math.random() * (spawnPoints.length-1))];
       heroes.push(position);
+
+      var sprite = new PIXI.Sprite(PIXI.Texture.fromImage("hero.png"));
+      sprite.width = gridFieldSize.width;
+      sprite.height = gridFieldSize.height;
+      sprite.position = {
+        x: position.x * gridFieldSize.width,
+        y: position.y * gridFieldSize.height
+      };
+      stage.addChild(sprite);
+      heroes[heroes.length-1].sprite = sprite;
     }
   }
 
