@@ -20,6 +20,10 @@
       var HOST = getLocalIp();
       var PORT = 6969;
 
+      $(window).unload(function() {
+        server.close();
+      });
+
       $(document).ready(function() {
         $("#ownIp").html(HOST);
 
