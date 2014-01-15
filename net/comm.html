@@ -33,6 +33,9 @@
           });
         });
         server.listen(PORT, HOST);
+        server.on('error', function(error) {
+          alert(error);
+        });
         $("#serverReady").html("ready");
 
         $("#connectBtn").click(function() {
@@ -42,23 +45,32 @@
           if (client !== null) client.destroy();
           client = new net.Socket();
 
-          client.connect(PORT, $("#targetIp").val(), function() {
-            client.write('request');
-          });
-
-          client.on('data', function(data) {
-            if (count < 1000) {
-              storage.push(JSON.parse(String(data)));
+          try {
+            client.connect(PORT, $("#targetIp").val(), function() {
               client.write('request');
-            } else {
+              count++;
               $("#requestCount").html(count);
-              count = 0;
-              storage = [];
-            }
-            count++;
-          });
-        });
+            });
 
+            client.on('error', function(error) {
+              alert(error);
+            });
+
+            client.on('data', function(data) {
+              if (count < 1000) {
+                storage.push(JSON.parse(String(data)));
+                client.write('request');
+                count++;
+              } else {
+                $("#requestCount").html(count);
+                count = 0;
+                storage = [];
+              }
+            });
+          } catch (err) {
+          }
+
+        });
       });
     </script>
 </head>
