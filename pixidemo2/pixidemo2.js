@@ -36,6 +36,7 @@ $(document).ready(function() {
       lastHeroSpawnTryTime = currentTime;
       heroSpawnTry();
     }
+    moveHeroes();
     requestAnimFrame(function() { animate(); });
   }
   requestAnimFrame(function() { animate(); });
@@ -52,9 +53,7 @@ $(document).ready(function() {
       grid[y][x] = 0;
     }
   }
-
   // special map positions
-  var heroes = [], maxHeroes = 100;
   var spawnPoints = [
     { x: 0, y: 0 },
     { x: gridSize.width - 1, y: 0 },
@@ -63,11 +62,13 @@ $(document).ready(function() {
   ];
   var middlePoint = {x: Math.round(gridSize.width/2), y: Math.round(gridSize.height/2)};
 
+  // heroes stuff
+  var heroes = [], maxHeroes = 10;
   function heroSpawnTry() {
     if (isChance(0.3 - (0.3 / maxHeroes * heroes.length))) {
-      console.log("spawn hero with chance", 0.3 - (0.3 / maxHeroes * heroes.length));
+      //console.log("spawn hero with chance", 0.3 - (0.3 / maxHeroes * heroes.length));
       var position = spawnPoints[Math.round(Math.random() * (spawnPoints.length-1))];
-      heroes.push(position);
+      heroes.push({ position: position });
 
       var sprite = new PIXI.Sprite(PIXI.Texture.fromImage("hero.png"));
       sprite.width = gridFieldSize.width;
@@ -78,6 +79,64 @@ $(document).ready(function() {
       };
       stage.addChild(sprite);
       heroes[heroes.length-1].sprite = sprite;
+      heroes[heroes.length-1].movement = false;
+    }
+  }
+
+  function moveHeroes() {
+    for (var i = 0; i < heroes.length; i++) {
+      if (heroes[i].movement == false) {
+        moveHeroBehaviourMiddlePoint(heroes[i])
+      }
+    }
+  }
+
+  function moveHeroBehaviourMiddlePoint(hero) {
+    // behaviour 1, follow path to middle point
+    var path = getWalkablePath(hero.position, middlePoint);
+
+    if (path.length > 0) {
+      var tweens = [], nextPosX = 0, nextPosY = 0,
+          lastPosX = hero.position.x * gridFieldSize.width,
+          lastPosY = hero.position.y * gridFieldSize.height;
+
+      for (var j = 0; j < path.length; j++) {
+        nextPosX = path[j][0] * gridFieldSize.width;
+        nextPosY = path[j][1] * gridFieldSize.height;
+        var scope = this;
+
+        tweens[j] = function(iJ, sourceX, sourceY, targetX, targetY, iFieldX, iFieldY, iDistance, isLastField) {
+          var distance = Math.sqrt(Math.pow(sourceX - targetX, 2) + Math.pow(sourceY - targetY, 2));
+          return new TWEEN.Tween( { x: sourceX, y: sourceY } )
+            .to(
+              { x: targetX, y: targetY }, 1000 * distance / 10
+            )
+            .onUpdate( function () {
+              if (hero.movement == false) {
+                tweens[iJ].stop();
+              }
+              hero.sprite.position.x = this.x;
+              hero.sprite.position.y = this.y;
+            })
+            .onComplete( function () {
+              hero.position.x = iFieldX;
+              hero.position.y = iFieldY;
+              if (isLastField) hero.movement = false;
+            });
+        }(
+          j, lastPosX, lastPosY, nextPosX, nextPosY, path[j][0], path[j][1], (j == path.length - 1) ? true : false
+        );
+
+        lastPosX = nextPosX;
+        lastPosY = nextPosY;
+
+        if (j > 0) {
+          tweens[j-1].chain(tweens[j]);
+        }
+      }
+
+      tweens[0].start();
+      hero.movement = true;
     }
   }
 
