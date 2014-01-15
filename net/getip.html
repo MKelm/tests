@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Net - Get Local Ip</title>
+    <script language="javascript">
+      function getLocalIp(internal) {
+        var networkInterfaces = require('os').networkInterfaces(), interface = null;
+        for (var interfaceName in networkInterfaces) {
+          interface = networkInterfaces[interfaceName];
+          for (var i = 0; i < interface.length; i++) {
+            if (interface[i].family == "IPv4" && interface[i].internal == new Boolean(internal))
+              return interface[i].address;
+          }
+        }
+      }
+
+      console.log("internal", getLocalIp(true));
+      console.log("external", getLocalIp());
+    </script>
+</head>
+<body>
+</body>
+</html>
