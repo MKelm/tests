@@ -98,8 +98,8 @@ $(document).ready(function() {
             x: Math.round(heroes[i].position.x - cosAlpha * distance),
             y: Math.round(heroes[i].position.y - sinAlpha * distance)
           };
-          if (targetPoint.x < 0) targetPoint.x = 0;
-          if (targetPoint.y < 0) targetPoint.y = 0;
+          targetPoint.x = (targetPoint.x < 0) ? 0 : (targetPoint.x > gridSize.width-1) ? gridSize.width-1 : targetPoint.x;
+          targetPoint.y = (targetPoint.y < 0) ? 0 : (targetPoint.y > gridSize.height-1) ? gridSize.height-1 : targetPoint.y;
           moveHero(heroes[i], targetPoint);
         }
       }
@@ -119,7 +119,7 @@ $(document).ready(function() {
         nextPosY = path[j][1] * gridFieldSize.height;
         var scope = this;
 
-        tweens[j] = function(iJ, sourceX, sourceY, targetX, targetY, iFieldX, iFieldY, iDistance, isLastField) {
+        tweens[j] = function(iJ, sourceX, sourceY, targetX, targetY, iFieldX, iFieldY, isLastField) {
           var distance = Math.sqrt(Math.pow(sourceX - targetX, 2) + Math.pow(sourceY - targetY, 2));
           return new TWEEN.Tween( { x: sourceX, y: sourceY } )
             .to(
