@@ -42,7 +42,7 @@ $(document).ready(function() {
   requestAnimFrame(function() { animate(); });
 
   // grid stuff
-  var gridSize = { width: 80, height: 80 };
+  var gridSize = { width: 20, height: 20 };
   var gridFieldSize = { width: Math.round(screen.height/gridSize.width), height: Math.round(screen.height/gridSize.height) };
   var pathfindingGrid = new PF.Grid(gridSize.width, gridSize.height);
   var grid = [];
@@ -66,7 +66,6 @@ $(document).ready(function() {
   var heroes = [], maxHeroes = 10;
   function heroSpawnTry() {
     if (isChance(0.3 - (0.3 / maxHeroes * heroes.length))) {
-      //console.log("spawn hero with chance", 0.3 - (0.3 / maxHeroes * heroes.length));
       var position = spawnPoints[Math.round(Math.random() * (spawnPoints.length-1))];
       heroes.push({ position: position });
 
@@ -109,6 +108,16 @@ $(document).ready(function() {
   function moveHero(hero, targetPosition) {
     var path = getWalkablePath(hero.position, targetPosition);
 
+    if (isChance(0.5)) {
+      // behaviour to reduce path length
+      var pathLength = Math.round(Math.random() * path.length-1)+1;
+      var newPath = [];
+      for (var i = 0; i < pathLength; i++) {
+        newPath.push(path[i]);
+      }
+      path = newPath;
+    }
+
     if (path.length > 0) {
       var tweens = [], nextPosX = 0, nextPosY = 0,
           lastPosX = hero.position.x * gridFieldSize.width,
@@ -126,9 +135,6 @@ $(document).ready(function() {
               { x: targetX, y: targetY }, 1000 * distance / 10
             )
             .onUpdate( function () {
-              if (hero.movement == false) {
-                tweens[iJ].stop();
-              }
               hero.sprite.position.x = this.x;
               hero.sprite.position.y = this.y;
             })
