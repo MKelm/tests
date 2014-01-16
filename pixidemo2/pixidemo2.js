@@ -86,14 +86,28 @@ $(document).ready(function() {
   function moveHeroes() {
     for (var i = 0; i < heroes.length; i++) {
       if (heroes[i].movement == false) {
-        moveHeroBehaviourMiddlePoint(heroes[i])
+        var behaviour = Math.round(Math.random() * 1);
+        if (behaviour == 0) {
+          // first behaviour, follow path to middle point
+          moveHero(heroes[i], middlePoint);
+        } else {
+          // second behaviour, follow path to random point
+          var distance = 10, angle = Math.round(Math.random() * 360),
+              cosAlpha = Math.cos(angle), sinAlpha = Math.sin(angle);
+          var targetPoint = {
+            x: Math.round(heroes[i].position.x - cosAlpha * distance),
+            y: Math.round(heroes[i].position.y - sinAlpha * distance)
+          };
+          if (targetPoint.x < 0) targetPoint.x = 0;
+          if (targetPoint.y < 0) targetPoint.y = 0;
+          moveHero(heroes[i], targetPoint);
+        }
       }
     }
   }
 
-  function moveHeroBehaviourMiddlePoint(hero) {
-    // behaviour 1, follow path to middle point
-    var path = getWalkablePath(hero.position, middlePoint);
+  function moveHero(hero, targetPosition) {
+    var path = getWalkablePath(hero.position, targetPosition);
 
     if (path.length > 0) {
       var tweens = [], nextPosX = 0, nextPosY = 0,
